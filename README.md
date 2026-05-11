@@ -62,6 +62,31 @@ A solução foi organizada com um núcleo central de inteligência executiva e e
 - Copilot Studio
 - Power BI
 
+  ## 📂 Estrutura do repositório
+
+```txt
+yoda-inteligencia-executiva/
+├── README.md
+├── json/
+│   └── yoda-configuration.json
+├── bot/
+│   └── bot.xml
+├── automations/
+│   └── automacoes-agentes.xml
+└── docs/
+    └── yoda-apresentacao.pdf
+```
+
+## 🗃️ Organização dos arquivos
+
+Este repositório foi estruturado para separar documentação, configuração e componentes técnicos da solução:
+
+- `README.md` — apresentação geral do projeto, proposta de valor, capacidades e arquitetura.
+- `json/` — configurações e arquivos estruturados da solução.
+- `bot/` — definição principal do agente e sua estrutura base.
+- `automations/` — fluxos, automações e componentes operacionais relacionados ao projeto.
+- `docs/` — apresentações, materiais complementares e documentação executiva.
+
 ## 👨‍💻 Meu papel no projeto
 
 Todo o projeto foi desenvolvido por mim, incluindo:
