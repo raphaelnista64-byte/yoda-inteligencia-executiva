@@ -1,0 +1,438 @@
+{
+  "properties": {
+    "connectionReferences": {
+      "shared_excelonlinebusiness": {
+        "api": {
+          "name": "shared_excelonlinebusiness"
+        },
+        "connection": {
+          "connectionReferenceLogicalName": "new_sharedexcelonlinebusiness_c2448"
+        },
+        "runtimeSource": "invoker"
+      }
+    },
+    "definition": {
+      "$schema": "https://schema.management.azure.com/providers/Microsoft.Logic/schemas/2016-06-01/workflowdefinition.json#",
+      "contentVersion": "1.0.0.0",
+      "parameters": {
+        "$authentication": {
+          "defaultValue": {},
+          "type": "SecureObject"
+        },
+        "$connections": {
+          "defaultValue": {},
+          "type": "Object"
+        }
+      },
+      "triggers": {
+        "manual": {
+          "type": "Request",
+          "kind": "Skills",
+          "inputs": {
+            "schema": {
+              "type": "object",
+              "properties": {
+                "text": {
+                  "description": "Favorecido_Entrada",
+                  "title": "Texto",
+                  "type": "string",
+                  "x-ms-content-hint": "TEXT",
+                  "x-ms-dynamically-added": true
+                },
+                "text_1": {
+                  "description": "Mes_Entrada",
+                  "title": "Texto 1",
+                  "type": "string",
+                  "x-ms-content-hint": "TEXT",
+                  "x-ms-dynamically-added": true
+                }
+              },
+              "required": [
+                "text",
+                "text_1"
+              ]
+            }
+          },
+          "metadata": {
+            "operationMetadataId": "b8f61c18-7224-4f8a-9c5f-72fbce5df764"
+          }
+        }
+      },
+      "actions": {
+        "Respond_to_the_agent": {
+          "type": "Response",
+          "kind": "Skills",
+          "inputs": {
+            "schema": {
+              "type": "object",
+              "properties": {
+                "respostafinal": {
+                  "title": "RespostaFinal",
+                  "description": "Retorna o detalhamento dos pagamentos localizados, incluindo alertas de duplicidade se houver, valores das parcelas, datas de vencimento e observações extraídas da planilha financeira.",
+                  "type": "string",
+                  "x-ms-content-hint": "TEXT",
+                  "x-ms-dynamically-added": true
+                }
+              },
+              "additionalProperties": {}
+            },
+            "statusCode": 200,
+            "body": {
+              "respostafinal": "@{variables('VarCorpoResposta')}"
+            }
+          },
+          "runAfter": {
+            "Condição_2": [
+              "Succeeded"
+            ]
+          },
+          "metadata": {
+            "operationMetadataId": "81c94f73-dd52-465c-ad3b-a4686da63cc3"
+          }
+        },
+        "Listar_linhas_presentes_em_uma_tabela_Principal": {
+          "type": "OpenApiConnection",
+          "description": "",
+          "inputs": {
+            "parameters": {
+              "source": "https://veccon365.sharepoint.com/VDoc/performance",
+              "drive": "b!NI1jdP-6jEmtDflxb-YNbJXbCp_8iFNLoGi1nl0W0caU-o4kWC0VTps9eZ9Zrlk2",
+              "file": "01JQYPFI23TTXOLDNHH5H2BWI2KLKGKU3J",
+              "table": "{D7D89170-2210-4420-A2B9-DCD2AC4F3A28}"
+            },
+            "host": {
+              "apiId": "/providers/Microsoft.PowerApps/apis/shared_excelonlinebusiness",
+              "operationId": "GetItems",
+              "connectionName": "shared_excelonlinebusiness"
+            }
+          },
+          "runAfter": {
+            "Checar_PF": [
+              "Succeeded"
+            ]
+          },
+          "runtimeConfiguration": {
+            "paginationPolicy": {
+              "minimumItemCount": 1500
+            }
+          },
+          "metadata": {
+            "01JQYPFI23TTXOLDNHH5H2BWI2KLKGKU3J": "/Documentos Farejador/Farejador nova planilha.xlsx",
+            "tableId": "{D7D89170-2210-4420-A2B9-DCD2AC4F3A28}"
+          }
+        },
+        "Listar_linhas_presentes_numa_tabela_PF": {
+          "type": "OpenApiConnection",
+          "inputs": {
+            "parameters": {
+              "source": "sites/veccon365.sharepoint.com,74638d34-baff-498c-ad0d-f9716fe60d6c,9f0adb95-88fc-4b53-a068-b59e5d16d1c6",
+              "drive": "b!NI1jdP-6jEmtDflxb-YNbJXbCp_8iFNLoGi1nl0W0caU-o4kWC0VTps9eZ9Zrlk2",
+              "file": "01JQYPFI23TTXOLDNHH5H2BWI2KLKGKU3J",
+              "table": "{F73C95D0-7723-4C6D-8B8C-ACFF5FB8B31E}"
+            },
+            "host": {
+              "apiId": "/providers/Microsoft.PowerApps/apis/shared_excelonlinebusiness",
+              "operationId": "GetItems",
+              "connectionName": "shared_excelonlinebusiness"
+            }
+          },
+          "runAfter": {
+            "Inicializar_variável_1_VarTipoColaborador": [
+              "Succeeded"
+            ]
+          },
+          "runtimeConfiguration": {
+            "paginationPolicy": {
+              "minimumItemCount": 1500
+            }
+          },
+          "metadata": {
+            "01JQYPFI23TTXOLDNHH5H2BWI2KLKGKU3J": "/Documentos Farejador/Farejador nova planilha.xlsx",
+            "tableId": "{F73C95D0-7723-4C6D-8B8C-ACFF5FB8B31E}"
+          }
+        },
+        "Listar_linhas_presentes_numa_tabela_PJ": {
+          "type": "OpenApiConnection",
+          "inputs": {
+            "parameters": {
+              "source": "sites/veccon365.sharepoint.com,74638d34-baff-498c-ad0d-f9716fe60d6c,9f0adb95-88fc-4b53-a068-b59e5d16d1c6",
+              "drive": "b!NI1jdP-6jEmtDflxb-YNbJXbCp_8iFNLoGi1nl0W0caU-o4kWC0VTps9eZ9Zrlk2",
+              "file": "01JQYPFI23TTXOLDNHH5H2BWI2KLKGKU3J",
+              "table": "{531304E1-1053-4B7E-A558-23ECD41340C8}"
+            },
+            "host": {
+              "apiId": "/providers/Microsoft.PowerApps/apis/shared_excelonlinebusiness",
+              "operationId": "GetItems",
+              "connectionName": "shared_excelonlinebusiness"
+            }
+          },
+          "runAfter": {
+            "Listar_linhas_presentes_numa_tabela_PF": [
+              "Succeeded"
+            ]
+          },
+          "runtimeConfiguration": {
+            "paginationPolicy": {
+              "minimumItemCount": 1500
+            }
+          },
+          "metadata": {
+            "01JQYPFI23TTXOLDNHH5H2BWI2KLKGKU3J": "/Documentos Farejador/Farejador nova planilha.xlsx",
+            "tableId": "{531304E1-1053-4B7E-A558-23ECD41340C8}"
+          }
+        },
+        "Filtrar_matriz_PF": {
+          "type": "Query",
+          "inputs": {
+            "from": "@outputs('Listar_linhas_presentes_numa_tabela_PF')?['body/value']",
+            "where": "@contains(toLower(coalesce(item()?['FAVORECIDO'], '')), toLower(coalesce(triggerBody()?['text'], '')))"
+          },
+          "runAfter": {
+            "Listar_linhas_presentes_numa_tabela_PJ": [
+              "Succeeded"
+            ]
+          }
+        },
+        "Filtrar_matriz_PJ": {
+          "type": "Query",
+          "inputs": {
+            "from": "@outputs('Listar_linhas_presentes_numa_tabela_PJ')?['body/value']",
+            "where": "@contains(toLower(coalesce(item()?['Nome'], '')), toLower(coalesce(triggerBody()?['text'], '')))"
+          },
+          "runAfter": {
+            "Filtrar_matriz_PF": [
+              "Succeeded"
+            ]
+          }
+        },
+        "Checar_PF": {
+          "type": "If",
+          "expression": {
+            "and": [
+              {
+                "greater": [
+                  "@length(body('Filtrar_matriz_PF'))",
+                  0
+                ]
+              }
+            ]
+          },
+          "actions": {
+            "Definir_variável": {
+              "type": "SetVariable",
+              "inputs": {
+                "name": "VarTipoColaborador",
+                "value": "Colaborador Interno PF"
+              }
+            }
+          },
+          "else": {
+            "actions": {
+              "Checar_PJ": {
+                "type": "If",
+                "expression": {
+                  "and": [
+                    {
+                      "greater": [
+                        "@length(body('Filtrar_matriz_PJ'))",
+                        0
+                      ]
+                    }
+                  ]
+                },
+                "actions": {
+                  "Definir_variável_3": {
+                    "type": "SetVariable",
+                    "inputs": {
+                      "name": "VarTipoColaborador",
+                      "value": "Colaborador Interno PJ"
+                    }
+                  }
+                },
+                "else": {
+                  "actions": {
+                    "Definir_variável_4": {
+                      "type": "SetVariable",
+                      "inputs": {
+                        "name": "VarTipoColaborador",
+                        "value": "Prestador de Serviço Externo"
+                      }
+                    }
+                  }
+                }
+              }
+            }
+          },
+          "runAfter": {
+            "Filtrar_matriz_PJ": [
+              "Succeeded"
+            ]
+          }
+        },
+        "Inicializar_variável_1_VarTipoColaborador": {
+          "type": "InitializeVariable",
+          "inputs": {
+            "variables": [
+              {
+                "name": "VarTipoColaborador",
+                "type": "string"
+              }
+            ]
+          },
+          "runAfter": {
+            "Inicializar_variável_VarCorpoResposta2": [
+              "Succeeded"
+            ]
+          }
+        },
+        "Condição_2": {
+          "type": "If",
+          "expression": {
+            "or": [
+              {
+                "contains": [
+                  "@variables('VarCorpoResposta')",
+                  "Poço"
+                ]
+              },
+              {
+                "contains": [
+                  "@variables('VarCorpoResposta')",
+                  "CPFL"
+                ]
+              },
+              {
+                "contains": [
+                  "@variables('VarCorpoResposta')",
+                  "EEE"
+                ]
+              },
+              {
+                "contains": [
+                  "@variables('VarCorpoResposta')",
+                  "Poço 1"
+                ]
+              },
+              {
+                "contains": [
+                  "@variables('VarCorpoResposta')",
+                  "Poço 2"
+                ]
+              },
+              {
+                "contains": [
+                  "@variables('VarCorpoResposta')",
+                  "Poço 3"
+                ]
+              }
+            ]
+          },
+          "actions": {
+            "Filtrar_matriz_CPFL": {
+              "type": "Query",
+              "inputs": {
+                "from": "@outputs('Listar_linhas_presentes_em_uma_tabela_Principal')?['body/value']",
+                "where": "@and(\n    contains(toLower(coalesce(item()?['Observacao'], '')), 'vista verde'),\n    or(\n        contains(toLower(coalesce(item()?['Observacao'], '')), '4003802867'),\n        contains(toLower(coalesce(item()?['Observacao'], '')), '4003911505'),\n        contains(toLower(coalesce(item()?['Observacao'], '')), '4003830138'),\n        contains(toLower(coalesce(item()?['Observacao'], '')), 'eee')\n    )\n)"
+              }
+            },
+            "Loop_CPFL": {
+              "type": "Foreach",
+              "foreach": "@body('Filtrar_matriz_CPFL')",
+              "actions": {
+                "Acrescentar_à_variável_da_cadeia_1": {
+                  "type": "AppendToStringVariable",
+                  "inputs": {
+                    "name": "VarCorpoResposta",
+                    "value": "🔋 Ativo: @{if(contains(items('Loop_CPFL')?['Observacao'], '4003802867'), 'Poço 01 - ID 4003802867', \n              if(contains(items('Loop_CPFL')?['Observacao'], '4003911505'), 'Poço 02 - ID 4003911505', \n              if(contains(items('Loop_CPFL')?['Observacao'], '4003830138'), 'Poço 03 - ID 4003830138', \n              if(contains(items('Loop_CPFL')?['Observacao'], 'eee'), 'Estação Elevatória (EEE)', 'Unidade Vista Verde'))))}\n💰 Valor: R$ @{coalesce(items('Loop_CPFL')?['ValorParcela'], '0,00')}\n📅 Data: @{coalesce(items('Loop_CPFL')?['DataPagamento'], 'N/A')}\n📝 Detalhe: @{coalesce(items('Loop_CPFL')?['Observacao'], 'Sem descrição')}\n---"
+                  }
+                }
+              },
+              "runAfter": {
+                "Filtrar_matriz_CPFL": [
+                  "Succeeded"
+                ]
+              }
+            }
+          },
+          "else": {
+            "actions": {
+              "Filtrar_matriz_favo_e_mes": {
+                "type": "Query",
+                "inputs": {
+                  "from": "@outputs('Listar_linhas_presentes_em_uma_tabela_Principal')?['body/value']",
+                  "where": "@and(\n    equals(item()?['MesPagamento'], triggerBody()?['text_1']),\n    contains(toLower(item()?['Favorecido']), toLower(triggerBody()?['text']))\n)"
+                }
+              },
+              "Condição": {
+                "type": "If",
+                "expression": {
+                  "and": [
+                    {
+                      "greater": [
+                        "@length(body('Filtrar_matriz_favo_e_mes'))",
+                        0
+                      ]
+                    }
+                  ]
+                },
+                "actions": {
+                  "Compor": {
+                    "type": "Compose",
+                    "inputs": "@sum(body('Filtrar_matriz_favo_e_mes')?['Valor'])"
+                  },
+                  "Aplicar_a_cada_3": {
+                    "type": "Foreach",
+                    "foreach": "@body('Filtrar_matriz_favo_e_mes')",
+                    "actions": {
+                      "Acrescentar_à_variável_da_cadeia": {
+                        "type": "AppendToStringVariable",
+                        "inputs": {
+                          "name": "VarCorpoResposta",
+                          "value": "📌 Favorecido: @{items('Aplicar_a_cada_3')?['Favorecido']}\n📅 Data: @{items('Aplicar_a_cada_3')?['DataPagamento']}\n🏢 Classificação: @{variables('VarTipoColaborador')}\n💰 Valor: R$ @{items('Aplicar_a_cada_3')?['ValorParcela']}\n📝 Obs: @{items('Aplicar_a_cada_3')?['Observacao']}"
+                        }
+                      }
+                    },
+                    "runAfter": {
+                      "Compor": [
+                        "Succeeded"
+                      ]
+                    }
+                  }
+                },
+                "else": {
+                  "actions": {}
+                },
+                "runAfter": {
+                  "Filtrar_matriz_favo_e_mes": [
+                    "Succeeded"
+                  ]
+                }
+              }
+            }
+          },
+          "runAfter": {
+            "Listar_linhas_presentes_em_uma_tabela_Principal": [
+              "Succeeded"
+            ]
+          }
+        },
+        "Inicializar_variável_VarCorpoResposta2": {
+          "type": "InitializeVariable",
+          "inputs": {
+            "variables": [
+              {
+                "name": "VarCorpoResposta",
+                "type": "string"
+              }
+            ]
+          },
+          "runAfter": {}
+        }
+      },
+      "outputs": {},
+      "description": "When an agent calls the flow and send back a response."
+    },
+    "templateName": null
+  },
+  "schemaVersion": "1.0.0.0"
+}

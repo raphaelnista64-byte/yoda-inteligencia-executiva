@@ -1,0 +1,218 @@
+{
+  "properties": {
+    "connectionReferences": {
+      "shared_powerbi": {
+        "api": {
+          "name": "shared_powerbi"
+        },
+        "connection": {
+          "connectionReferenceLogicalName": "new_sharedpowerbi_c6a6e"
+        },
+        "runtimeSource": "invoker"
+      }
+    },
+    "definition": {
+      "$schema": "https://schema.management.azure.com/providers/Microsoft.Logic/schemas/2016-06-01/workflowdefinition.json#",
+      "contentVersion": "1.0.0.0",
+      "parameters": {
+        "$authentication": {
+          "defaultValue": {},
+          "type": "SecureObject"
+        },
+        "$connections": {
+          "defaultValue": {},
+          "type": "Object"
+        }
+      },
+      "triggers": {
+        "manual": {
+          "type": "Request",
+          "kind": "Skills",
+          "inputs": {
+            "schema": {
+              "type": "object",
+              "properties": {},
+              "required": []
+            }
+          },
+          "metadata": {
+            "operationMetadataId": "b8f61c18-7224-4f8a-9c5f-72fbce5df764"
+          }
+        }
+      },
+      "actions": {
+        "Respond_to_the_agent": {
+          "type": "Response",
+          "kind": "Skills",
+          "inputs": {
+            "schema": {
+              "type": "object",
+              "properties": {
+                "dados_vgv": {
+                  "title": "Dados_VGV",
+                  "description": "",
+                  "type": "string",
+                  "x-ms-content-hint": "TEXT",
+                  "x-ms-dynamically-added": true
+                }
+              },
+              "additionalProperties": {}
+            },
+            "statusCode": 200,
+            "body": {
+              "dados_vgv": "VGV Bruto:\n\n🎯 Meta Prevista: R$ @{outputs('Bruto_Metas')?['body/currentValue']}\n✅ Realizado: R$ @{outputs('Bruto_Vendas_')?['body/currentValue']}\n🚨VGV Bruto Porcentagem: @{outputs('Bruto_Porcentagem')?['body/currentValue']}\n\nVGV Líquido\n\n🎯 Líquido Vendido: R$ @{outputs('Liquido_Vendido')?['body/currentValue']}\n🏴‍☠️ Distratos: R$ @{outputs('Liquido_Distratos')?['body/currentValue']}\n✅ Saldo Líquido: R$ @{outputs('Liquido_Saldo')?['body/currentValue']}\n🚨VGV Líquido Porcentagem: @{outputs('Liquido_Porcentagem')?['body/currentValue']}"
+            }
+          },
+          "runAfter": {
+            "Liquido_Porcentagem": [
+              "Succeeded"
+            ]
+          },
+          "metadata": {
+            "operationMetadataId": "81c94f73-dd52-465c-ad3b-a4686da63cc3"
+          }
+        },
+        "Bruto_Metas": {
+          "type": "OpenApiConnection",
+          "inputs": {
+            "parameters": {
+              "groupid": "728fee6d-35da-4919-ae90-2c2dc04c9aa0",
+              "scorecardId": "5e48a937-9e5f-4d12-a114-5b5367484b4a",
+              "goalId": "784bbfba-3edc-46ae-813c-cd2863c2003e"
+            },
+            "host": {
+              "apiId": "/providers/Microsoft.PowerApps/apis/shared_powerbi",
+              "operationId": "GetGoal",
+              "connectionName": "shared_powerbi"
+            }
+          },
+          "runAfter": {}
+        },
+        "Bruto_Vendas_": {
+          "type": "OpenApiConnection",
+          "inputs": {
+            "parameters": {
+              "groupid": "728fee6d-35da-4919-ae90-2c2dc04c9aa0",
+              "scorecardId": "5e48a937-9e5f-4d12-a114-5b5367484b4a",
+              "goalId": "91776f66-dc44-4914-82b5-fef498a3856d"
+            },
+            "host": {
+              "apiId": "/providers/Microsoft.PowerApps/apis/shared_powerbi",
+              "operationId": "GetGoal",
+              "connectionName": "shared_powerbi"
+            }
+          },
+          "runAfter": {
+            "Bruto_Metas": [
+              "Succeeded"
+            ]
+          }
+        },
+        "Bruto_Porcentagem": {
+          "type": "OpenApiConnection",
+          "inputs": {
+            "parameters": {
+              "groupid": "728fee6d-35da-4919-ae90-2c2dc04c9aa0",
+              "scorecardId": "5e48a937-9e5f-4d12-a114-5b5367484b4a",
+              "goalId": "50871e07-bfd2-45dc-8128-6269f346dbe2"
+            },
+            "host": {
+              "apiId": "/providers/Microsoft.PowerApps/apis/shared_powerbi",
+              "operationId": "GetGoal",
+              "connectionName": "shared_powerbi"
+            }
+          },
+          "runAfter": {
+            "Bruto_Vendas_": [
+              "Succeeded"
+            ]
+          }
+        },
+        "Liquido_Vendido": {
+          "type": "OpenApiConnection",
+          "inputs": {
+            "parameters": {
+              "groupid": "728fee6d-35da-4919-ae90-2c2dc04c9aa0",
+              "scorecardId": "5e48a937-9e5f-4d12-a114-5b5367484b4a",
+              "goalId": "4fc7a805-a08a-4c03-adff-38c36bcef38a"
+            },
+            "host": {
+              "apiId": "/providers/Microsoft.PowerApps/apis/shared_powerbi",
+              "operationId": "GetGoal",
+              "connectionName": "shared_powerbi"
+            }
+          },
+          "runAfter": {
+            "Bruto_Porcentagem": [
+              "Succeeded"
+            ]
+          }
+        },
+        "Liquido_Distratos": {
+          "type": "OpenApiConnection",
+          "inputs": {
+            "parameters": {
+              "groupid": "728fee6d-35da-4919-ae90-2c2dc04c9aa0",
+              "scorecardId": "5e48a937-9e5f-4d12-a114-5b5367484b4a",
+              "goalId": "1d441baf-d48e-4890-a137-689bdec43082"
+            },
+            "host": {
+              "apiId": "/providers/Microsoft.PowerApps/apis/shared_powerbi",
+              "operationId": "GetGoal",
+              "connectionName": "shared_powerbi"
+            }
+          },
+          "runAfter": {
+            "Liquido_Vendido": [
+              "Succeeded"
+            ]
+          }
+        },
+        "Liquido_Saldo": {
+          "type": "OpenApiConnection",
+          "inputs": {
+            "parameters": {
+              "groupid": "728fee6d-35da-4919-ae90-2c2dc04c9aa0",
+              "scorecardId": "5e48a937-9e5f-4d12-a114-5b5367484b4a",
+              "goalId": "3510c4ee-6857-4a48-afd0-7e5278d1ef02"
+            },
+            "host": {
+              "apiId": "/providers/Microsoft.PowerApps/apis/shared_powerbi",
+              "operationId": "GetGoal",
+              "connectionName": "shared_powerbi"
+            }
+          },
+          "runAfter": {
+            "Liquido_Distratos": [
+              "Succeeded"
+            ]
+          }
+        },
+        "Liquido_Porcentagem": {
+          "type": "OpenApiConnection",
+          "inputs": {
+            "parameters": {
+              "groupid": "728fee6d-35da-4919-ae90-2c2dc04c9aa0",
+              "scorecardId": "5e48a937-9e5f-4d12-a114-5b5367484b4a",
+              "goalId": "fdb4835d-a3e9-47f7-8e1e-e002b50631a7"
+            },
+            "host": {
+              "apiId": "/providers/Microsoft.PowerApps/apis/shared_powerbi",
+              "operationId": "GetGoal",
+              "connectionName": "shared_powerbi"
+            }
+          },
+          "runAfter": {
+            "Liquido_Saldo": [
+              "Succeeded"
+            ]
+          }
+        }
+      },
+      "outputs": {},
+      "description": "When an agent calls the flow and send back a response."
+    },
+    "templateName": null
+  },
+  "schemaVersion": "1.0.0.0"
+}

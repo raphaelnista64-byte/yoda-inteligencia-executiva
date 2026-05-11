@@ -1,0 +1,218 @@
+{
+  "properties": {
+    "connectionReferences": {
+      "shared_powerbi": {
+        "api": {
+          "name": "shared_powerbi"
+        },
+        "connection": {
+          "connectionReferenceLogicalName": "new_sharedpowerbi_c6a6e"
+        },
+        "runtimeSource": "invoker"
+      }
+    },
+    "definition": {
+      "$schema": "https://schema.management.azure.com/providers/Microsoft.Logic/schemas/2016-06-01/workflowdefinition.json#",
+      "contentVersion": "1.0.0.0",
+      "parameters": {
+        "$authentication": {
+          "defaultValue": {},
+          "type": "SecureObject"
+        },
+        "$connections": {
+          "defaultValue": {},
+          "type": "Object"
+        }
+      },
+      "triggers": {
+        "manual": {
+          "type": "Request",
+          "kind": "Skills",
+          "inputs": {
+            "schema": {
+              "type": "object",
+              "properties": {},
+              "required": []
+            }
+          },
+          "metadata": {
+            "operationMetadataId": "b8f61c18-7224-4f8a-9c5f-72fbce5df764"
+          }
+        }
+      },
+      "actions": {
+        "Respond_to_the_agent": {
+          "type": "Response",
+          "kind": "Skills",
+          "inputs": {
+            "schema": {
+              "type": "object",
+              "properties": {
+                "resposta": {
+                  "title": "resposta",
+                  "description": "Valor atual do estoque da Veccon",
+                  "type": "string",
+                  "x-ms-content-hint": "TEXT",
+                  "x-ms-dynamically-added": true
+                }
+              },
+              "additionalProperties": {}
+            },
+            "statusCode": 200,
+            "body": {
+              "resposta": "Mestre, aqui está o status do estoque da Veccon:\n\n**Geral (Loteamentos):**\n💰 Valor Total: **R$ @{outputs('Estoque_Total')?['body/currentValue']}**\n🏠 Unidades: **@{outputs('Valor_Médio_UN')?['body/currentValue']}**\n🎫 Ticket Médio: **R$ @{outputs('Ticket_Médio')?['body/currentValue']}**\n\n**🏗️ Incorporação (Destaques):**\n📍 Moradas 1: **[@{outputs('Disp_Moradas_01')?['body/currentValue']} disponíveis | @{outputs('Resevados_Moradas_01')?['body/targetValue']} reservados.**\n📍 Paulínia: **@{outputs('Disp_Paulinea')?['body/currentValue']} disponíveis | @{outputs('Indis_Paulinea')?['body/currentValue']} indisponíveis**.\n"
+            }
+          },
+          "runAfter": {
+            "Indis_Paulinea": [
+              "SUCCEEDED"
+            ]
+          },
+          "metadata": {
+            "operationMetadataId": "81c94f73-dd52-465c-ad3b-a4686da63cc3"
+          }
+        },
+        "Estoque_Total": {
+          "type": "OpenApiConnection",
+          "inputs": {
+            "parameters": {
+              "groupid": "a0c66d24-b2c7-4649-8cb8-0aa445933230",
+              "scorecardId": "b505b6be-e815-438a-8258-138a59f1aa6c",
+              "goalId": "e9df9c0a-5503-4bfb-b88b-4d9a986bad39"
+            },
+            "host": {
+              "apiId": "/providers/Microsoft.PowerApps/apis/shared_powerbi",
+              "operationId": "GetGoal",
+              "connectionName": "shared_powerbi"
+            }
+          },
+          "runAfter": {}
+        },
+        "Ticket_Médio": {
+          "type": "OpenApiConnection",
+          "inputs": {
+            "parameters": {
+              "groupid": "a0c66d24-b2c7-4649-8cb8-0aa445933230",
+              "scorecardId": "b505b6be-e815-438a-8258-138a59f1aa6c",
+              "goalId": "d51b0e13-6044-4c36-9ce8-57a385e39950"
+            },
+            "host": {
+              "apiId": "/providers/Microsoft.PowerApps/apis/shared_powerbi",
+              "operationId": "GetGoal",
+              "connectionName": "shared_powerbi"
+            }
+          },
+          "runAfter": {
+            "Estoque_Total": [
+              "SUCCEEDED"
+            ]
+          }
+        },
+        "Valor_Médio_UN": {
+          "type": "OpenApiConnection",
+          "inputs": {
+            "parameters": {
+              "groupid": "a0c66d24-b2c7-4649-8cb8-0aa445933230",
+              "scorecardId": "b505b6be-e815-438a-8258-138a59f1aa6c",
+              "goalId": "7d329c17-7a6d-4d4c-9b52-edc3a0c1fb39"
+            },
+            "host": {
+              "apiId": "/providers/Microsoft.PowerApps/apis/shared_powerbi",
+              "operationId": "GetGoal",
+              "connectionName": "shared_powerbi"
+            }
+          },
+          "runAfter": {
+            "Ticket_Médio": [
+              "SUCCEEDED"
+            ]
+          }
+        },
+        "Disp_Moradas_01": {
+          "type": "OpenApiConnection",
+          "inputs": {
+            "parameters": {
+              "groupid": "a0c66d24-b2c7-4649-8cb8-0aa445933230",
+              "scorecardId": "b505b6be-e815-438a-8258-138a59f1aa6c",
+              "goalId": "199689e7-0ec4-4adf-a6ef-a946d931661f"
+            },
+            "host": {
+              "apiId": "/providers/Microsoft.PowerApps/apis/shared_powerbi",
+              "operationId": "GetGoal",
+              "connectionName": "shared_powerbi"
+            }
+          },
+          "runAfter": {
+            "Valor_Médio_UN": [
+              "SUCCEEDED"
+            ]
+          }
+        },
+        "Resevados_Moradas_01": {
+          "type": "OpenApiConnection",
+          "inputs": {
+            "parameters": {
+              "groupid": "a0c66d24-b2c7-4649-8cb8-0aa445933230",
+              "scorecardId": "b505b6be-e815-438a-8258-138a59f1aa6c",
+              "goalId": "a3cc35a0-ca97-447a-9132-fd93a975dd6f"
+            },
+            "host": {
+              "apiId": "/providers/Microsoft.PowerApps/apis/shared_powerbi",
+              "operationId": "GetGoal",
+              "connectionName": "shared_powerbi"
+            }
+          },
+          "runAfter": {
+            "Disp_Moradas_01": [
+              "SUCCEEDED"
+            ]
+          }
+        },
+        "Disp_Paulinea": {
+          "type": "OpenApiConnection",
+          "inputs": {
+            "parameters": {
+              "groupid": "a0c66d24-b2c7-4649-8cb8-0aa445933230",
+              "scorecardId": "b505b6be-e815-438a-8258-138a59f1aa6c",
+              "goalId": "d0721f78-66ba-45e8-af0c-2820ba06bbfd"
+            },
+            "host": {
+              "apiId": "/providers/Microsoft.PowerApps/apis/shared_powerbi",
+              "operationId": "GetGoal",
+              "connectionName": "shared_powerbi"
+            }
+          },
+          "runAfter": {
+            "Resevados_Moradas_01": [
+              "SUCCEEDED"
+            ]
+          }
+        },
+        "Indis_Paulinea": {
+          "type": "OpenApiConnection",
+          "inputs": {
+            "parameters": {
+              "groupid": "a0c66d24-b2c7-4649-8cb8-0aa445933230",
+              "scorecardId": "b505b6be-e815-438a-8258-138a59f1aa6c",
+              "goalId": "7db1e654-f728-48a8-88db-745f44b82893"
+            },
+            "host": {
+              "apiId": "/providers/Microsoft.PowerApps/apis/shared_powerbi",
+              "operationId": "GetGoal",
+              "connectionName": "shared_powerbi"
+            }
+          },
+          "runAfter": {
+            "Disp_Paulinea": [
+              "SUCCEEDED"
+            ]
+          }
+        }
+      },
+      "outputs": {},
+      "description": "When an agent calls the flow and send back a response."
+    },
+    "templateName": null
+  },
+  "schemaVersion": "1.0.0.0"
+}

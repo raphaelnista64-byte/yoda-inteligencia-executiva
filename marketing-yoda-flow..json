@@ -1,0 +1,138 @@
+{
+  "properties": {
+    "connectionReferences": {
+      "shared_powerbi": {
+        "api": {
+          "name": "shared_powerbi"
+        },
+        "connection": {
+          "connectionReferenceLogicalName": "new_sharedpowerbi_c6a6e"
+        },
+        "runtimeSource": "invoker"
+      }
+    },
+    "definition": {
+      "$schema": "https://schema.management.azure.com/providers/Microsoft.Logic/schemas/2016-06-01/workflowdefinition.json#",
+      "contentVersion": "1.0.0.0",
+      "parameters": {
+        "$authentication": {
+          "defaultValue": {},
+          "type": "SecureObject"
+        },
+        "$connections": {
+          "defaultValue": {},
+          "type": "Object"
+        }
+      },
+      "triggers": {
+        "manual": {
+          "type": "Request",
+          "kind": "Skills",
+          "inputs": {
+            "schema": {
+              "type": "object",
+              "properties": {},
+              "required": []
+            }
+          },
+          "metadata": {
+            "operationMetadataId": "b8f61c18-7224-4f8a-9c5f-72fbce5df764"
+          }
+        }
+      },
+      "actions": {
+        "Respond_to_the_agent": {
+          "type": "Response",
+          "kind": "Skills",
+          "inputs": {
+            "schema": {
+              "type": "object",
+              "properties": {
+                "analise_mkt": {
+                  "title": "analise_mkt",
+                  "description": "",
+                  "type": "string",
+                  "x-ms-content-hint": "TEXT",
+                  "x-ms-dynamically-added": true
+                }
+              },
+              "additionalProperties": {}
+            },
+            "statusCode": 200,
+            "body": {
+              "analise_mkt": "📢 PERFORMANCE DE MARKETING & CAC\n\nEficiência de Aquisição:\n\n💸 Investimento Total: R$ @{outputs('Total_Investimento_MKT')?['body/currentValue']}\n\n👤 CAC Médio: R$ @{outputs('cac_geral')?['body/currentValue']}\n\n📈 ROI (Inv. sobre VGV): @{outputs('Investimento_VGV')?['body/currentValue']}\n"
+            }
+          },
+          "runAfter": {
+            "Investimento_VGV": [
+              "Succeeded"
+            ]
+          },
+          "metadata": {
+            "operationMetadataId": "81c94f73-dd52-465c-ad3b-a4686da63cc3"
+          }
+        },
+        "Total_Investimento_MKT": {
+          "type": "OpenApiConnection",
+          "inputs": {
+            "parameters": {
+              "groupid": "a0c66d24-b2c7-4649-8cb8-0aa445933230",
+              "scorecardId": "b505b6be-e815-438a-8258-138a59f1aa6c",
+              "goalId": "c91c2d17-ed3d-4ab7-ac4f-c9013e6fe578"
+            },
+            "host": {
+              "apiId": "/providers/Microsoft.PowerApps/apis/shared_powerbi",
+              "operationId": "GetGoal",
+              "connectionName": "shared_powerbi"
+            }
+          },
+          "runAfter": {}
+        },
+        "cac_geral": {
+          "type": "OpenApiConnection",
+          "inputs": {
+            "parameters": {
+              "groupid": "a0c66d24-b2c7-4649-8cb8-0aa445933230",
+              "scorecardId": "b505b6be-e815-438a-8258-138a59f1aa6c",
+              "goalId": "c676b735-c26b-4ddb-9e19-115fc61dcac1"
+            },
+            "host": {
+              "apiId": "/providers/Microsoft.PowerApps/apis/shared_powerbi",
+              "operationId": "GetGoal",
+              "connectionName": "shared_powerbi"
+            }
+          },
+          "runAfter": {
+            "Total_Investimento_MKT": [
+              "Succeeded"
+            ]
+          }
+        },
+        "Investimento_VGV": {
+          "type": "OpenApiConnection",
+          "inputs": {
+            "parameters": {
+              "groupid": "a0c66d24-b2c7-4649-8cb8-0aa445933230",
+              "scorecardId": "b505b6be-e815-438a-8258-138a59f1aa6c",
+              "goalId": "516713f0-4f11-472c-8fb5-80313edd8e35"
+            },
+            "host": {
+              "apiId": "/providers/Microsoft.PowerApps/apis/shared_powerbi",
+              "operationId": "GetGoal",
+              "connectionName": "shared_powerbi"
+            }
+          },
+          "runAfter": {
+            "cac_geral": [
+              "Succeeded"
+            ]
+          }
+        }
+      },
+      "outputs": {},
+      "description": "When an agent calls the flow and send back a response."
+    },
+    "templateName": null
+  },
+  "schemaVersion": "1.0.0.0"
+}

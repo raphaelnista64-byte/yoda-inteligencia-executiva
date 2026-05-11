@@ -1,0 +1,158 @@
+{
+  "properties": {
+    "connectionReferences": {
+      "shared_powerbi": {
+        "api": {
+          "name": "shared_powerbi"
+        },
+        "connection": {
+          "connectionReferenceLogicalName": "new_sharedpowerbi_c6a6e"
+        },
+        "runtimeSource": "invoker"
+      }
+    },
+    "definition": {
+      "$schema": "https://schema.management.azure.com/providers/Microsoft.Logic/schemas/2016-06-01/workflowdefinition.json#",
+      "contentVersion": "1.0.0.0",
+      "parameters": {
+        "$authentication": {
+          "defaultValue": {},
+          "type": "SecureObject"
+        },
+        "$connections": {
+          "defaultValue": {},
+          "type": "Object"
+        }
+      },
+      "triggers": {
+        "manual": {
+          "type": "Request",
+          "kind": "Skills",
+          "inputs": {
+            "schema": {
+              "type": "object",
+              "properties": {},
+              "required": []
+            }
+          },
+          "metadata": {
+            "operationMetadataId": "b8f61c18-7224-4f8a-9c5f-72fbce5df764"
+          }
+        }
+      },
+      "actions": {
+        "Respond_to_the_agent": {
+          "type": "Response",
+          "kind": "Skills",
+          "inputs": {
+            "schema": {
+              "type": "object",
+              "properties": {
+                "resposta_sobre_locação": {
+                  "title": "resposta sobre locação",
+                  "description": "",
+                  "type": "string",
+                  "x-ms-content-hint": "TEXT",
+                  "x-ms-dynamically-added": true
+                }
+              },
+              "additionalProperties": {}
+            },
+            "statusCode": 200,
+            "body": {
+              "resposta_sobre_locação": "🏢 RELATÓRIO DE PATRIMÔNIO E LOCAÇÃO\n\nOcupação e Receita:\n\n💰 Receita Mensal: R$ @{outputs('Receita_Local_Mensal')?['body/currentValue']}\n\n📊 Ocupação: @{outputs('Ocupação_do_Imóvel')?['body/currentValue']} \n\n💸 Faturamento Ocioso: R$ @{outputs('Faturamento_Ocioso')?['body/currentValue']}\n\nMetas de Área:\n\n🏗️ Galpões: @{outputs('Metas_Galspoes')?['body/currentValue']} m²\n"
+            }
+          },
+          "runAfter": {
+            "Metas_Galspoes": [
+              "Succeeded"
+            ]
+          },
+          "metadata": {
+            "operationMetadataId": "81c94f73-dd52-465c-ad3b-a4686da63cc3"
+          }
+        },
+        "Receita_Local_Mensal": {
+          "type": "OpenApiConnection",
+          "inputs": {
+            "parameters": {
+              "groupid": "a0c66d24-b2c7-4649-8cb8-0aa445933230",
+              "scorecardId": "b505b6be-e815-438a-8258-138a59f1aa6c",
+              "goalId": "51e13cb8-befe-43f2-8456-9d730c526af1"
+            },
+            "host": {
+              "apiId": "/providers/Microsoft.PowerApps/apis/shared_powerbi",
+              "operationId": "GetGoal",
+              "connectionName": "shared_powerbi"
+            }
+          },
+          "runAfter": {}
+        },
+        "Ocupação_do_Imóvel": {
+          "type": "OpenApiConnection",
+          "inputs": {
+            "parameters": {
+              "groupid": "a0c66d24-b2c7-4649-8cb8-0aa445933230",
+              "scorecardId": "b505b6be-e815-438a-8258-138a59f1aa6c",
+              "goalId": "58bca5c1-614f-4ba0-a47e-ca1f0de2a4f0"
+            },
+            "host": {
+              "apiId": "/providers/Microsoft.PowerApps/apis/shared_powerbi",
+              "operationId": "GetGoal",
+              "connectionName": "shared_powerbi"
+            }
+          },
+          "runAfter": {
+            "Receita_Local_Mensal": [
+              "Succeeded"
+            ]
+          }
+        },
+        "Faturamento_Ocioso": {
+          "type": "OpenApiConnection",
+          "inputs": {
+            "parameters": {
+              "groupid": "a0c66d24-b2c7-4649-8cb8-0aa445933230",
+              "scorecardId": "b505b6be-e815-438a-8258-138a59f1aa6c",
+              "goalId": "e93141de-7534-4fd9-aacf-06597deb9695"
+            },
+            "host": {
+              "apiId": "/providers/Microsoft.PowerApps/apis/shared_powerbi",
+              "operationId": "GetGoal",
+              "connectionName": "shared_powerbi"
+            }
+          },
+          "runAfter": {
+            "Ocupação_do_Imóvel": [
+              "Succeeded"
+            ]
+          }
+        },
+        "Metas_Galspoes": {
+          "type": "OpenApiConnection",
+          "inputs": {
+            "parameters": {
+              "groupid": "a0c66d24-b2c7-4649-8cb8-0aa445933230",
+              "scorecardId": "b505b6be-e815-438a-8258-138a59f1aa6c",
+              "goalId": "32ac7c37-3ed6-43cd-bc9b-b75be7e6b2b2"
+            },
+            "host": {
+              "apiId": "/providers/Microsoft.PowerApps/apis/shared_powerbi",
+              "operationId": "GetGoal",
+              "connectionName": "shared_powerbi"
+            }
+          },
+          "runAfter": {
+            "Faturamento_Ocioso": [
+              "Succeeded"
+            ]
+          }
+        }
+      },
+      "outputs": {},
+      "description": "When an agent calls the flow and send back a response."
+    },
+    "templateName": null
+  },
+  "schemaVersion": "1.0.0.0"
+}

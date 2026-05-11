@@ -1,0 +1,378 @@
+{
+  "properties": {
+    "connectionReferences": {
+      "shared_powerbi": {
+        "api": {
+          "name": "shared_powerbi"
+        },
+        "connection": {
+          "connectionReferenceLogicalName": "new_sharedpowerbi_c6a6e"
+        },
+        "runtimeSource": "invoker"
+      }
+    },
+    "definition": {
+      "$schema": "https://schema.management.azure.com/providers/Microsoft.Logic/schemas/2016-06-01/workflowdefinition.json#",
+      "contentVersion": "1.0.0.0",
+      "parameters": {
+        "$authentication": {
+          "defaultValue": {},
+          "type": "SecureObject"
+        },
+        "$connections": {
+          "defaultValue": {},
+          "type": "Object"
+        }
+      },
+      "triggers": {
+        "manual": {
+          "type": "Request",
+          "kind": "Skills",
+          "inputs": {
+            "schema": {
+              "type": "object",
+              "properties": {},
+              "required": []
+            }
+          },
+          "metadata": {
+            "operationMetadataId": "b8f61c18-7224-4f8a-9c5f-72fbce5df764"
+          }
+        }
+      },
+      "actions": {
+        "Respond_to_the_agent": {
+          "type": "Response",
+          "kind": "Skills",
+          "inputs": {
+            "schema": {
+              "type": "object",
+              "properties": {
+                "saida_vendasperformance": {
+                  "title": "Saida_VendasPERFORMANCE",
+                  "description": "",
+                  "type": "string",
+                  "x-ms-content-hint": "TEXT",
+                  "x-ms-dynamically-added": true
+                }
+              },
+              "additionalProperties": {}
+            },
+            "statusCode": 200,
+            "body": {
+              "saida_vendasperformance": " 🎯 Total Vendas (meta): R$@{outputs('Total_Vendas_Previsto')?['body/currentValue']} \n✅ Realizado: R$ @{outputs('Total_Vendas_Realizado')?['body/currentValue']} \n🏴‍☠️ Distratos: R$ @{outputs('Total_Distratos')?['body/currentValue']}\n\nEssence \n🎯 Total Vendas (meta): R$ @{outputs('Vendas_Previsto_Essence')?['body/currentValue']}\n✅ Realizado: R$ @{outputs('Vendas_Realizadas_Essence')?['body/currentValue']}\n\nMoradas 01 \n🎯 Total Vendas (meta): R$ @{outputs('Vendas_Mordas_01_Previstas')?['body/currentValue']} \n✅ Realizado: R$ @{outputs('Vendas_Realizadas_Mordas_01')?['body/currentValue']}\n\nPouso \n🎯 Total Vendas (meta): R$ @{outputs('Vendas_Pouso_Previstas_')?['body/currentValue']}\n✅ Realizado: R$ @{outputs('Vendas_Realizadas_Pouso')?['body/currentValue']}\n\nVista \n🎯 Total Vendas (meta): R$ @{outputs('Vendas_Vista_Previstas_')?['body/currentValue']}\n✅ Realizado: R$ @{outputs('Vendas_Realizadas_Vista')?['body/currentValue']}\n\nZeta AP \n🎯 Total Vendas (meta): R$ @{outputs('Vendas_Prevista_Zeta')?['body/currentValue']} \n✅ Realizado: R$ @{outputs('Vendas_Realizadas_Zea')?['body/currentValue']}\n\nMoradas 01 - Incorporação\n🎯 Total Vendas (meta): R$ @{outputs('Vendas_Mordas_01_-_Incorporação_Meta')?['body/currentValue']}\n✅ Realizado: R$ @{outputs('Vendas_Moradas_01_-_Incorporação_Realizadas')?['body/currentValue']}\n"
+            }
+          },
+          "runAfter": {
+            "Vendas_Moradas_01_-_Incorporação_Realizadas": [
+              "Succeeded"
+            ]
+          },
+          "metadata": {
+            "operationMetadataId": "81c94f73-dd52-465c-ad3b-a4686da63cc3"
+          }
+        },
+        "Total_Vendas_Previsto": {
+          "type": "OpenApiConnection",
+          "inputs": {
+            "parameters": {
+              "groupid": "bf560cd7-66a1-4209-ab00-fab567d9b401",
+              "scorecardId": "c7a87b03-ee93-4c86-882d-569fc88242fa",
+              "goalId": "91de59c1-bdf2-4133-8993-c8b6743105eb"
+            },
+            "host": {
+              "apiId": "/providers/Microsoft.PowerApps/apis/shared_powerbi",
+              "operationId": "GetGoal",
+              "connectionName": "shared_powerbi"
+            }
+          },
+          "runAfter": {}
+        },
+        "Total_Vendas_Realizado": {
+          "type": "OpenApiConnection",
+          "inputs": {
+            "parameters": {
+              "groupid": "bf560cd7-66a1-4209-ab00-fab567d9b401",
+              "scorecardId": "c7a87b03-ee93-4c86-882d-569fc88242fa",
+              "goalId": "a589e87a-3cb7-4e61-9b30-2977c544a6d9"
+            },
+            "host": {
+              "apiId": "/providers/Microsoft.PowerApps/apis/shared_powerbi",
+              "operationId": "GetGoal",
+              "connectionName": "shared_powerbi"
+            }
+          },
+          "runAfter": {
+            "Total_Vendas_Previsto": [
+              "Succeeded"
+            ]
+          }
+        },
+        "Total_Distratos": {
+          "type": "OpenApiConnection",
+          "inputs": {
+            "parameters": {
+              "groupid": "bf560cd7-66a1-4209-ab00-fab567d9b401",
+              "scorecardId": "c7a87b03-ee93-4c86-882d-569fc88242fa",
+              "goalId": "d7614ec4-735b-40a7-b064-944fa68cb39c"
+            },
+            "host": {
+              "apiId": "/providers/Microsoft.PowerApps/apis/shared_powerbi",
+              "operationId": "GetGoal",
+              "connectionName": "shared_powerbi"
+            }
+          },
+          "runAfter": {
+            "Total_Vendas_Realizado": [
+              "Succeeded"
+            ]
+          }
+        },
+        "Vendas_Realizadas_Essence": {
+          "type": "OpenApiConnection",
+          "inputs": {
+            "parameters": {
+              "groupid": "bf560cd7-66a1-4209-ab00-fab567d9b401",
+              "scorecardId": "c7a87b03-ee93-4c86-882d-569fc88242fa",
+              "goalId": "1cc0f2c5-6752-4e00-b584-36011cc8b4d7"
+            },
+            "host": {
+              "apiId": "/providers/Microsoft.PowerApps/apis/shared_powerbi",
+              "operationId": "GetGoal",
+              "connectionName": "shared_powerbi"
+            }
+          },
+          "runAfter": {
+            "Total_Distratos": [
+              "Succeeded"
+            ]
+          }
+        },
+        "Vendas_Previsto_Essence": {
+          "type": "OpenApiConnection",
+          "inputs": {
+            "parameters": {
+              "groupid": "bf560cd7-66a1-4209-ab00-fab567d9b401",
+              "scorecardId": "c7a87b03-ee93-4c86-882d-569fc88242fa",
+              "goalId": "f19fce9f-1ece-499e-84fe-714ebe278b99"
+            },
+            "host": {
+              "apiId": "/providers/Microsoft.PowerApps/apis/shared_powerbi",
+              "operationId": "GetGoal",
+              "connectionName": "shared_powerbi"
+            }
+          },
+          "runAfter": {
+            "Vendas_Realizadas_Essence": [
+              "Succeeded"
+            ]
+          }
+        },
+        "Vendas_Realizadas_Mordas_01": {
+          "type": "OpenApiConnection",
+          "inputs": {
+            "parameters": {
+              "groupid": "bf560cd7-66a1-4209-ab00-fab567d9b401",
+              "scorecardId": "c7a87b03-ee93-4c86-882d-569fc88242fa",
+              "goalId": "744a2f92-6d88-42d0-9f72-009c068fac45"
+            },
+            "host": {
+              "apiId": "/providers/Microsoft.PowerApps/apis/shared_powerbi",
+              "operationId": "GetGoal",
+              "connectionName": "shared_powerbi"
+            }
+          },
+          "runAfter": {
+            "Vendas_Previsto_Essence": [
+              "Succeeded"
+            ]
+          }
+        },
+        "Vendas_Mordas_01_Previstas": {
+          "type": "OpenApiConnection",
+          "inputs": {
+            "parameters": {
+              "groupid": "bf560cd7-66a1-4209-ab00-fab567d9b401",
+              "scorecardId": "c7a87b03-ee93-4c86-882d-569fc88242fa",
+              "goalId": "2d66d217-cfbe-43d6-9168-1c1e7d190c03"
+            },
+            "host": {
+              "apiId": "/providers/Microsoft.PowerApps/apis/shared_powerbi",
+              "operationId": "GetGoal",
+              "connectionName": "shared_powerbi"
+            }
+          },
+          "runAfter": {
+            "Vendas_Realizadas_Mordas_01": [
+              "Succeeded"
+            ]
+          }
+        },
+        "Vendas_Pouso_Previstas_": {
+          "type": "OpenApiConnection",
+          "inputs": {
+            "parameters": {
+              "groupid": "bf560cd7-66a1-4209-ab00-fab567d9b401",
+              "scorecardId": "c7a87b03-ee93-4c86-882d-569fc88242fa",
+              "goalId": "47b8198a-7341-454c-ac18-f579325e48cd"
+            },
+            "host": {
+              "apiId": "/providers/Microsoft.PowerApps/apis/shared_powerbi",
+              "operationId": "GetGoal",
+              "connectionName": "shared_powerbi"
+            }
+          },
+          "runAfter": {
+            "Vendas_Mordas_01_Previstas": [
+              "Succeeded"
+            ]
+          }
+        },
+        "Vendas_Realizadas_Pouso": {
+          "type": "OpenApiConnection",
+          "inputs": {
+            "parameters": {
+              "groupid": "bf560cd7-66a1-4209-ab00-fab567d9b401",
+              "scorecardId": "c7a87b03-ee93-4c86-882d-569fc88242fa",
+              "goalId": "681539f2-bb62-405b-82c0-1ce1e18d6191"
+            },
+            "host": {
+              "apiId": "/providers/Microsoft.PowerApps/apis/shared_powerbi",
+              "operationId": "GetGoal",
+              "connectionName": "shared_powerbi"
+            }
+          },
+          "runAfter": {
+            "Vendas_Pouso_Previstas_": [
+              "Succeeded"
+            ]
+          }
+        },
+        "Vendas_Vista_Previstas_": {
+          "type": "OpenApiConnection",
+          "inputs": {
+            "parameters": {
+              "groupid": "bf560cd7-66a1-4209-ab00-fab567d9b401",
+              "scorecardId": "c7a87b03-ee93-4c86-882d-569fc88242fa",
+              "goalId": "a1581f26-05ca-4246-9d83-33cca99dcabb"
+            },
+            "host": {
+              "apiId": "/providers/Microsoft.PowerApps/apis/shared_powerbi",
+              "operationId": "GetGoal",
+              "connectionName": "shared_powerbi"
+            }
+          },
+          "runAfter": {
+            "Vendas_Realizadas_Pouso": [
+              "Succeeded"
+            ]
+          }
+        },
+        "Vendas_Realizadas_Vista": {
+          "type": "OpenApiConnection",
+          "inputs": {
+            "parameters": {
+              "groupid": "bf560cd7-66a1-4209-ab00-fab567d9b401",
+              "scorecardId": "c7a87b03-ee93-4c86-882d-569fc88242fa",
+              "goalId": "e355fa27-dd10-415c-aae1-7a8cf81a4fff"
+            },
+            "host": {
+              "apiId": "/providers/Microsoft.PowerApps/apis/shared_powerbi",
+              "operationId": "GetGoal",
+              "connectionName": "shared_powerbi"
+            }
+          },
+          "runAfter": {
+            "Vendas_Vista_Previstas_": [
+              "Succeeded"
+            ]
+          }
+        },
+        "Vendas_Prevista_Zeta": {
+          "type": "OpenApiConnection",
+          "inputs": {
+            "parameters": {
+              "groupid": "bf560cd7-66a1-4209-ab00-fab567d9b401",
+              "scorecardId": "c7a87b03-ee93-4c86-882d-569fc88242fa",
+              "goalId": "add737b3-0b3a-4f74-8164-13883c5d6b29"
+            },
+            "host": {
+              "apiId": "/providers/Microsoft.PowerApps/apis/shared_powerbi",
+              "operationId": "GetGoal",
+              "connectionName": "shared_powerbi"
+            }
+          },
+          "runAfter": {
+            "Vendas_Realizadas_Vista": [
+              "Succeeded"
+            ]
+          }
+        },
+        "Vendas_Realizadas_Zea": {
+          "type": "OpenApiConnection",
+          "inputs": {
+            "parameters": {
+              "groupid": "bf560cd7-66a1-4209-ab00-fab567d9b401",
+              "scorecardId": "c7a87b03-ee93-4c86-882d-569fc88242fa",
+              "goalId": "cb2d705d-bfb6-42c1-9b9f-b32e93b11f6e"
+            },
+            "host": {
+              "apiId": "/providers/Microsoft.PowerApps/apis/shared_powerbi",
+              "operationId": "GetGoal",
+              "connectionName": "shared_powerbi"
+            }
+          },
+          "runAfter": {
+            "Vendas_Prevista_Zeta": [
+              "Succeeded"
+            ]
+          }
+        },
+        "Vendas_Mordas_01_-_Incorporação_Meta": {
+          "type": "OpenApiConnection",
+          "inputs": {
+            "parameters": {
+              "groupid": "bf560cd7-66a1-4209-ab00-fab567d9b401",
+              "scorecardId": "c7a87b03-ee93-4c86-882d-569fc88242fa",
+              "goalId": "159cb527-fb7e-46d7-be01-b5375b1ce598"
+            },
+            "host": {
+              "apiId": "/providers/Microsoft.PowerApps/apis/shared_powerbi",
+              "operationId": "GetGoal",
+              "connectionName": "shared_powerbi"
+            }
+          },
+          "runAfter": {
+            "Vendas_Realizadas_Zea": [
+              "Succeeded"
+            ]
+          }
+        },
+        "Vendas_Moradas_01_-_Incorporação_Realizadas": {
+          "type": "OpenApiConnection",
+          "inputs": {
+            "parameters": {
+              "groupid": "bf560cd7-66a1-4209-ab00-fab567d9b401",
+              "scorecardId": "c7a87b03-ee93-4c86-882d-569fc88242fa",
+              "goalId": "744a2f92-6d88-42d0-9f72-009c068fac45"
+            },
+            "host": {
+              "apiId": "/providers/Microsoft.PowerApps/apis/shared_powerbi",
+              "operationId": "GetGoal",
+              "connectionName": "shared_powerbi"
+            }
+          },
+          "runAfter": {
+            "Vendas_Mordas_01_-_Incorporação_Meta": [
+              "Succeeded"
+            ]
+          }
+        }
+      },
+      "outputs": {},
+      "description": "When an agent calls the flow and send back a response."
+    },
+    "templateName": null
+  },
+  "schemaVersion": "1.0.0.0"
+}
